@@ -6,6 +6,7 @@ import {
   useDeleteUserMutation,
   useGetUsersQuery,
 } from '../api/usersApi';
+import { useAiUserSummary } from '../hooks/useAiUserSummary';
 import type { User, UserRole, UserStatus } from '../types/User';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
 
@@ -25,9 +26,6 @@ export function UsersPage() {
   const [selectedStatus, setSelectedStatus] = useState<UserStatus | 'All'>('All');
   const [isAddUserModalOpen, setAddUserModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
-  const [aiSummary, setAiSummary] = useState('');
-  const [isAiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -50,6 +48,9 @@ export function UsersPage() {
     });
   }, [users, debouncedSearch, selectedRole, selectedStatus]);
 
+  const { handleGenerateAiSummary, aiSummary, isAiLoading, aiError } =
+    useAiUserSummary(filteredUsers);
+
   const formattedAiSummary = useMemo(() => {
     return formatAiSummary(aiSummary);
   }, [aiSummary]);
@@ -70,34 +71,6 @@ export function UsersPage() {
 
     await deleteUser(userToDelete.id);
     setUserToDelete(null);
-  };
-
-  const handleGenerateAiSummary = async () => {
-    try {
-      setAiLoading(true);
-      setAiError('');
-      setAiSummary('');
-
-      const response = await fetch('http://localhost:3001/api/ai/user-summary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ users: filteredUsers }),
-      });
-
-      if (!response.ok) {
-        throw new Error('AI summary request failed');
-      }
-
-      const data = await response.json();
-
-      setAiSummary(data.summary);
-    } catch {
-      setAiError('Nem sikerült elkészíteni az AI elemzést.');
-    } finally {
-      setAiLoading(false);
-    }
   };
 
   return (
