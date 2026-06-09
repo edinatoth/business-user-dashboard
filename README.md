@@ -15,7 +15,19 @@ Enterprise-style React + TypeScript application built to demonstrate modern fron
 - Reusable UI components
 - Responsive dashboard layout
 
-## Architecture
+## Architecture Decisions
+
+### Feature Based Structure
+
+The application follows a feature-based architecture instead of a type-based structure.
+
+Benefits:
+
+- Better scalability
+- Easier ownership of features
+- Reduced coupling
+- Easier code splitting
+- Clear separation of business domains
 
 src/
 ├── app/
