@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import './App.css';
-import { AddUserModal } from './components/AddUserModal';
-import { UserCard } from './components/Usercard';
-import { useDebounce } from './hooks/useDebounce';
-import { useUsers } from './hooks/useUsers';
+import { AddUserModal } from './features/users/components/AddUserModal';
+import { useDebounce } from './shared/hooks/useDebounce';
+import { useUsers } from './features/users/hooks/useUsers';
+import { UserCard } from './features/users/components/Usercard';
 
 function App() {
   const {users, isLoading, errorMessage, setUsers} = useUsers();
