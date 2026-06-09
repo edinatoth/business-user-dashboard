@@ -7,3 +7,7 @@ export type User = {
   status: string;
   lastLogin: string;
 };
+
+export type UserRole = 'Admin' | 'Manager' | 'User';
+
+export type UserStatus = 'Admin' | 'Manager' | 'User';

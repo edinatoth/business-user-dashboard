@@ -6,11 +6,13 @@ import {
   useDeleteUserMutation,
   useGetUsersQuery,
 } from '../api/usersApi';
-import type { User } from '../types/User';
+import type { User, UserRole, UserStatus } from '../types/User';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
 
 export function UsersPage() {
   const [search, setSearch] = useState('');
+  const [selectedRole, setSelectedRole] = useState<UserRole | 'All'>('All');
+  const [selectedStatus, setSelectedStatus] = useState<UserStatus | 'All'>('All');
   const [isAddUserModalOpen, setAddUserModalOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
@@ -20,11 +22,21 @@ export function UsersPage() {
   const [deleteUser] = useDeleteUserMutation();
   const hasError = Boolean(error);
 
-  const filteredUsers = useMemo(() => {
-    return users.filter((user) =>
-      user.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-    );
-  }, [users, debouncedSearch]);
+ const filteredUsers = useMemo(() => {
+  return users.filter((user) => {
+    const matchesSearch = user.name
+      .toLowerCase()
+      .includes(debouncedSearch.toLowerCase());
+
+    const matchesRole =
+      selectedRole === 'All' || user.role === selectedRole;
+
+    const matchesStatus =
+      selectedStatus === 'All' || user.status === selectedStatus;
+
+    return matchesSearch && matchesRole && matchesStatus;
+  });
+}, [users, debouncedSearch, selectedRole, selectedStatus]);
 
   const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     await addUser(newUser);
@@ -65,6 +77,37 @@ export function UsersPage() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Pl. Anna Kovács"
           />
+        </div>
+
+        <div className="filter-field">
+          <label htmlFor="role-filter">Szerepkör</label>
+          <select
+            id="role-filter"
+            value={selectedRole}
+            onChange={(event) =>
+              setSelectedRole(event.target.value as UserRole | 'All')
+            }
+          >
+            <option value="All">Összes</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+          </select>
+        </div>
+
+        <div className="filter-field">
+          <label htmlFor="status-filter">Státusz</label>
+          <select
+            id="status-filter"
+            value={selectedStatus}
+            onChange={(event) =>
+              setSelectedStatus(event.target.value as UserStatus | 'All')
+            }
+          >
+            <option value="All">Összes</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
 
         <div className="stats">
