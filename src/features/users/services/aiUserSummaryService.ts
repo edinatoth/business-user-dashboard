@@ -16,6 +16,12 @@ type ErrorResponse = {
   message?: string;
 };
 
+function getAiUserSummaryEndpoint() {
+  const aiApiUrl = import.meta.env.VITE_AI_API_URL ?? 'http://localhost:3001';
+
+  return `${aiApiUrl.replace(/\/$/, '')}/api/ai/user-summary`;
+}
+
 export class AiUserSummaryError extends Error {
   readonly code: AiUserSummaryErrorCode;
   readonly status?: number;
@@ -114,7 +120,7 @@ export async function generateAiUserSummary(users: User[]) {
   let response: Response;
 
   try {
-    response = await fetch('http://localhost:3001/api/ai/user-summary', {
+    response = await fetch(getAiUserSummaryEndpoint(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

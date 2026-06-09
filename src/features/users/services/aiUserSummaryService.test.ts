@@ -150,3 +150,33 @@ describe('generateAiUserSummary', () => {
     await expectAiError(generateAiUserSummary(users), 'REQUEST_FAILED');
   });
 });
+
+describe('generateAiUserSummary env configuration', () => {
+  afterEach(() => {
+    vi.resetModules();
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it('uses VITE_AI_API_URL as the backend base URL', async () => {
+    vi.stubEnv('VITE_AI_API_URL', 'https://api.example.com/');
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ summary }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { generateAiUserSummary: generateWithEnv } = await import(
+      './aiUserSummaryService'
+    );
+
+    await generateWithEnv(users);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.example.com/api/ai/user-summary',
+      expect.any(Object)
+    );
+  });
+});
