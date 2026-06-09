@@ -1,6 +1,6 @@
 # Business User Dashboard
 
-![Business User Dashboard preview](./docs/dashboard-preview.png)
+![Business User Dashboard preview](./docs/dashboard.png)
 
 Enterprise-style React + TypeScript application built to demonstrate modern frontend architecture and AI integration patterns.
 
