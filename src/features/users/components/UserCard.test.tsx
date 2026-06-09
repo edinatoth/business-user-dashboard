@@ -6,8 +6,8 @@ import { UserCard } from './UserCard';
 
 const user: User = {
   id: 42,
-  name: 'Anna Kovács',
-  email: 'anna.kovacs@example.com',
+  name: 'Anna Smith',
+  email: 'anna.smith@example.com',
   phone: '+36 30 123 4567',
   role: 'Admin',
   status: 'Active',
@@ -18,11 +18,11 @@ describe('UserCard', () => {
   it('renders user details', () => {
     render(<UserCard user={user} onDelete={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { name: 'Anna Kovács' })).toBeVisible();
-    expect(screen.getByText('AK')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Anna Smith' })).toBeVisible();
+    expect(screen.getByText('AS')).toBeVisible();
     expect(screen.getByText('Admin')).toBeVisible();
     expect(screen.getByText('Active')).toBeVisible();
-    expect(screen.getByText('anna.kovacs@example.com')).toBeVisible();
+    expect(screen.getByText('anna.smith@example.com')).toBeVisible();
     expect(screen.getByText('+36 30 123 4567')).toBeVisible();
     expect(screen.getByText('2026-06-01')).toBeVisible();
   });
@@ -33,7 +33,7 @@ describe('UserCard', () => {
 
     render(<UserCard user={user} onDelete={onDelete} />);
 
-    await testUser.click(screen.getByRole('button', { name: 'Törlés' }));
+    await testUser.click(screen.getByRole('button', { name: 'Delete' }));
 
     expect(onDelete).toHaveBeenCalledWith(42);
   });

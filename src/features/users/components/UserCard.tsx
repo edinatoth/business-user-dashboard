@@ -39,11 +39,11 @@ function UserCardComponent({ user, onDelete }: UserCardProps) {
           <dd>{user.email}</dd>
         </div>
         <div>
-          <dt>Telefon</dt>
+          <dt>Phone</dt>
           <dd>{user.phone}</dd>
         </div>
         <div>
-          <dt>Utolsó belépés</dt>
+          <dt>Last Login</dt>
           <dd>{user.lastLogin}</dd>
         </div>
       </dl>
@@ -53,7 +53,7 @@ function UserCardComponent({ user, onDelete }: UserCardProps) {
         type="button"
         onClick={() => onDelete(user.id)}
       >
-        Törlés
+        Delete
       </button>
     </li>
   );

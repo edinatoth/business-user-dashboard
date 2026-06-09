@@ -4,8 +4,8 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 let users: User[] = [
   {
     id: 1,
-    name: 'Anna Kovács',
-    email: 'anna.kovacs@example.com',
+    name: 'Anna Smith',
+    email: 'anna.smith@example.com',
     phone: '+36 30 123 4567',
     role: 'Admin',
     status: 'Active',
@@ -13,8 +13,8 @@ let users: User[] = [
   },
   {
     id: 2,
-    name: 'Péter Nagy',
-    email: 'peter.nagy@example.com',
+    name: 'Peter Brown',
+    email: 'peter.brown@example.com',
     phone: '+36 20 555 1122',
     role: 'Manager',
     status: 'Inactive',
@@ -22,8 +22,8 @@ let users: User[] = [
   },
   {
     id: 3,
-    name: 'Dóra Szabó',
-    email: 'dora.szabo@example.com',
+    name: 'Dora Johnson',
+    email: 'dora.johnson@example.com',
     phone: '+36 70 888 9911',
     role: 'User',
     status: 'Active',

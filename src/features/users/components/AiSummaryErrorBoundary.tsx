@@ -28,11 +28,11 @@ export class AiSummaryErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <section className="ai-boundary-fallback" role="alert">
-          <p className="eyebrow">AI döntéstámogatás</p>
-          <h2>Az AI összefoglaló nem jeleníthető meg</h2>
+          <p className="eyebrow">AI Decision Support</p>
+          <h2>The AI summary could not be displayed</h2>
           <p>
-            A felhasználói lista továbbra is használható. Kérlek, frissítsd az
-            elemzést vagy próbáld újra később.
+            The user list is still available. Refresh the analysis or try again
+            later.
           </p>
         </section>
       );

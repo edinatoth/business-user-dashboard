@@ -29,9 +29,9 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
 
   const errors = useMemo(() => {
     return {
-      name: formData.name.trim() ? '' : 'A név kötelező.',
-      email: formData.email.includes('@') ? '' : 'Érvényes email cím szükséges.',
-      phone: formData.phone.trim() ? '' : 'A telefonszám kötelező.',
+      name: formData.name.trim() ? '' : 'Name is required.',
+      email: formData.email.includes('@') ? '' : 'A valid email address is required.',
+      phone: formData.phone.trim() ? '' : 'Phone number is required.',
     };
   }, [formData]);
 
@@ -87,14 +87,14 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
       >
         <div className="modal__header">
           <div>
-            <p className="eyebrow">Új rekord</p>
-            <h2 id="add-user-title">Felhasználó hozzáadása</h2>
+            <p className="eyebrow">New Record</p>
+            <h2 id="add-user-title">Add User</h2>
           </div>
           <button
             className="icon-button"
             type="button"
             onClick={onClose}
-            aria-label="Bezárás"
+            aria-label="Close"
           >
             ×
           </button>
@@ -102,7 +102,7 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
 
         <form className="form" onSubmit={handleSubmit}>
           <div className="form-field">
-            <label htmlFor="name">Név</label>
+            <label htmlFor="name">Name</label>
             <input
               ref={nameInputRef}
               id="name"
@@ -110,7 +110,7 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
               value={formData.name}
               onChange={handleChange}
               onBlur={handleBlur}
-              placeholder="Pl. Kiss Júlia"
+              placeholder="e.g. Julia Smith"
             />
             {touched.name && errors.name && <p role="alert">{errors.name}</p>}
           </div>
@@ -130,7 +130,7 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
           </div>
 
           <div className="form-field">
-            <label htmlFor="phone">Telefon</label>
+            <label htmlFor="phone">Phone</label>
             <input
               id="phone"
               name="phone"
@@ -144,10 +144,10 @@ export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
 
           <div className="modal__actions">
             <button className="button button--ghost" type="button" onClick={onClose}>
-              Mégse
+              Cancel
             </button>
             <button className="button button--primary" type="submit" disabled={!isFormValid}>
-              Mentés
+              Save
             </button>
           </div>
         </form>

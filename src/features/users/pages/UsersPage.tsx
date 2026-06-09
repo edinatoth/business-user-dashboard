@@ -65,11 +65,11 @@ export function UsersPage() {
     <main className="dashboard">
       <section className="dashboard__hero">
         <div>
-          <p className="eyebrow">Felhasználókezelés</p>
+          <p className="eyebrow">User Management</p>
           <h1>Business User Management Dashboard</h1>
           <p className="dashboard__lead">
-            Áttekinthető lista, gyors keresés és egyszerű felhasználókezelés egy
-            letisztult felületen.
+            A clean dashboard for browsing, filtering, and managing business
+            users with fast operational insight.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function UsersPage() {
             type="button"
             onClick={() => setAddUserModalOpen(true)}
           >
-            + Új felhasználó
+            + Add User
           </button>
 
           <button
@@ -88,24 +88,24 @@ export function UsersPage() {
             onClick={handleGenerateAiSummary}
             disabled={isAiLoading || filteredUsers.length === 0}
           >
-            {isAiLoading ? 'AI elemzés folyamatban...' : 'AI elemzés'}
+            {isAiLoading ? 'Generating AI analysis...' : 'AI Analysis'}
           </button>
         </div>
       </section>
 
-      <section className="toolbar" aria-label="Felhasználók szűrése">
+      <section className="toolbar" aria-label="Filter users">
         <div className="search-field">
-          <label htmlFor="search">Keresés név alapján</label>
+          <label htmlFor="search">Search by name</label>
           <input
             id="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Pl. Anna Kovács"
+            placeholder="e.g. Anna Smith"
           />
         </div>
 
         <div className="filter-field">
-          <label htmlFor="role-filter">Szerepkör</label>
+          <label htmlFor="role-filter">Role</label>
           <select
             id="role-filter"
             value={selectedRole}
@@ -113,7 +113,7 @@ export function UsersPage() {
               setSelectedRole(event.target.value as UserRole | 'All')
             }
           >
-            <option value="All">Összes</option>
+            <option value="All">All</option>
             <option value="Admin">Admin</option>
             <option value="Manager">Manager</option>
             <option value="User">User</option>
@@ -121,7 +121,7 @@ export function UsersPage() {
         </div>
 
         <div className="filter-field">
-          <label htmlFor="status-filter">Státusz</label>
+          <label htmlFor="status-filter">Status</label>
           <select
             id="status-filter"
             value={selectedStatus}
@@ -129,7 +129,7 @@ export function UsersPage() {
               setSelectedStatus(event.target.value as UserStatus | 'All')
             }
           >
-            <option value="All">Összes</option>
+            <option value="All">All</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
@@ -137,11 +137,11 @@ export function UsersPage() {
 
         <div className="stats">
           <div className="stat">
-            <span>Összes felhasználó</span>
+            <span>Total Users</span>
             <strong>{users.length}</strong>
           </div>
           <div className="stat">
-            <span>Találatok</span>
+            <span>Matches</span>
             <strong>{filteredUsers.length}</strong>
           </div>
         </div>
@@ -159,11 +159,11 @@ export function UsersPage() {
         </AiSummaryErrorBoundary>
       )}
 
-      {isLoading && <p className="state-message">Betöltés folyamatban...</p>}
+      {isLoading && <p className="state-message">Loading users...</p>}
 
       {hasError && (
         <p className="state-message state-message--error" role="alert">
-          Hiba történt a felhasználók betöltésekor.
+          Could not load users.
         </p>
       )}
 
@@ -180,7 +180,7 @@ export function UsersPage() {
             ))}
           </ul>
         ) : (
-          <p className="state-message">Nincs találat erre a keresésre.</p>
+          <p className="state-message">No users match the current filters.</p>
         ))}
 
       {isAddUserModalOpen && (
@@ -203,11 +203,11 @@ export function UsersPage() {
             </div>
 
             <div className="confirm-modal__content">
-              <p className="eyebrow">Végleges művelet</p>
-              <h2 id="delete-user-title">Törlés megerősítése</h2>
+              <p className="eyebrow">Permanent Action</p>
+              <h2 id="delete-user-title">Confirm Deletion</h2>
               <p>
-                Biztosan törölni szeretnéd ezt a felhasználót? A művelet után
-                nem fog megjelenni a listában.
+                Are you sure you want to delete this user? They will no longer
+                appear in the list after this action.
               </p>
 
               <div className="delete-user-preview">
@@ -222,7 +222,7 @@ export function UsersPage() {
                 type="button"
                 onClick={() => setUserToDelete(null)}
               >
-                Mégse
+                Cancel
               </button>
 
               <button
@@ -230,7 +230,7 @@ export function UsersPage() {
                 type="button"
                 onClick={confirmDelete}
               >
-                Törlés
+                Delete
               </button>
             </div>
           </div>

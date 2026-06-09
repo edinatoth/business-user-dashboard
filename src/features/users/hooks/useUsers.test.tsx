@@ -16,8 +16,8 @@ describe('useUsers', () => {
         json: async () => [
           {
             id: 1,
-            name: 'Anna Kovács',
-            email: 'anna.kovacs@example.com',
+            name: 'Anna Smith',
+            email: 'anna.smith@example.com',
             phone: '+36 30 123 4567',
           },
         ],
@@ -30,7 +30,7 @@ describe('useUsers', () => {
       expect(result.current.users).toHaveLength(1);
     });
 
-    expect(result.current.users[0].name).toBe('Anna Kovács');
+    expect(result.current.users[0].name).toBe('Anna Smith');
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errorMessage).toBeNull();
   });

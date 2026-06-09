@@ -19,11 +19,11 @@ describe('AiSummaryErrorBoundary', () => {
   it('renders children when there is no error', () => {
     render(
       <AiSummaryErrorBoundary>
-        <p>AI összefoglaló rendben.</p>
+        <p>AI summary is healthy.</p>
       </AiSummaryErrorBoundary>
     );
 
-    expect(screen.getByText('AI összefoglaló rendben.')).toBeVisible();
+    expect(screen.getByText('AI summary is healthy.')).toBeVisible();
   });
 
   it('renders a fallback when a child throws during render', () => {
@@ -36,9 +36,9 @@ describe('AiSummaryErrorBoundary', () => {
     expect(screen.getByRole('alert')).toBeVisible();
     expect(
       screen.getByRole('heading', {
-        name: 'Az AI összefoglaló nem jeleníthető meg',
+        name: 'The AI summary could not be displayed',
       })
     ).toBeVisible();
-    expect(screen.getByText(/A felhasználói lista továbbra is használható/)).toBeVisible();
+    expect(screen.getByText(/The user list is still available/)).toBeVisible();
   });
 });

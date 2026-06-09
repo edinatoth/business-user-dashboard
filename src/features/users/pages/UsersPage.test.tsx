@@ -8,8 +8,8 @@ const mocks = vi.hoisted(() => ({
   users: [
     {
       id: 1,
-      name: 'Anna Kovács',
-      email: 'anna.kovacs@example.com',
+      name: 'Anna Smith',
+      email: 'anna.smith@example.com',
       phone: '+36 30 123 4567',
       role: 'Admin',
       status: 'Active',
@@ -17,8 +17,8 @@ const mocks = vi.hoisted(() => ({
     },
     {
       id: 2,
-      name: 'Péter Nagy',
-      email: 'peter.nagy@example.com',
+      name: 'Peter Brown',
+      email: 'peter.brown@example.com',
       phone: '+36 20 555 1122',
       role: 'Manager',
       status: 'Inactive',
@@ -26,8 +26,8 @@ const mocks = vi.hoisted(() => ({
     },
     {
       id: 3,
-      name: 'Dóra Szabó',
-      email: 'dora.szabo@example.com',
+      name: 'Dora Johnson',
+      email: 'dora.johnson@example.com',
       phone: '+36 70 888 9911',
       role: 'User',
       status: 'Active',
@@ -35,7 +35,7 @@ const mocks = vi.hoisted(() => ({
     },
   ] satisfies User[],
   summary: {
-    overview: 'A felhasználói lista egészséges állapotban van.',
+    overview: 'The user base is in a healthy state.',
     stats: {
       totalUsers: 3,
       activeUsers: 2,
@@ -45,10 +45,10 @@ const mocks = vi.hoisted(() => ({
       standardUsers: 1,
     },
     riskLevel: 'Low',
-    risks: ['Egy inaktív manager található.'],
+    risks: ['One inactive manager was found.'],
     recommendations: [
-      'Ellenőrizd Péter Nagy jogosultságait.',
-      'Tartsd naprakészen az admin hozzáféréseket.',
+      'Review Peter Brown permissions.',
+      'Keep admin access up to date.',
     ],
   } satisfies AiSummary,
   addUser: vi.fn(),
@@ -89,19 +89,19 @@ describe('UsersPage', () => {
         name: 'Business User Management Dashboard',
       })
     ).toBeVisible();
-    expect(screen.getByText('Összes felhasználó')).toBeVisible();
-    expect(screen.getByText('Találatok')).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Anna Kovács' })).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Péter Nagy' })).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Dóra Szabó' })).toBeVisible();
+    expect(screen.getByText('Total Users')).toBeVisible();
+    expect(screen.getByText('Matches')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Anna Smith' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Peter Brown' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Dora Johnson' })).toBeVisible();
   });
 
   it('renders AI recommendations as readable cards', () => {
     render(<UsersPage />);
 
-    expect(screen.getByRole('heading', { name: 'Felhasználói javaslatok' })).toBeVisible();
-    expect(screen.getByText('Ellenőrizd Péter Nagy jogosultságait.')).toBeVisible();
-    expect(screen.getByText('Tartsd naprakészen az admin hozzáféréseket.')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'User Recommendations' })).toBeVisible();
+    expect(screen.getByText('Review Peter Brown permissions.')).toBeVisible();
+    expect(screen.getByText('Keep admin access up to date.')).toBeVisible();
   });
 
   it('filters users by role and status', async () => {
@@ -109,14 +109,14 @@ describe('UsersPage', () => {
 
     render(<UsersPage />);
 
-    await testUser.selectOptions(screen.getByLabelText('Szerepkör'), 'Manager');
+    await testUser.selectOptions(screen.getByLabelText('Role'), 'Manager');
 
-    expect(screen.getByRole('heading', { name: 'Péter Nagy' })).toBeVisible();
-    expect(screen.queryByRole('heading', { name: 'Anna Kovács' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Peter Brown' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Anna Smith' })).not.toBeInTheDocument();
 
-    await testUser.selectOptions(screen.getByLabelText('Státusz'), 'Active');
+    await testUser.selectOptions(screen.getByLabelText('Status'), 'Active');
 
-    expect(screen.getByText('Nincs találat erre a keresésre.')).toBeVisible();
+    expect(screen.getByText('No users match the current filters.')).toBeVisible();
   });
 
   it('calls AI summary generation from the hero button', async () => {
@@ -124,7 +124,7 @@ describe('UsersPage', () => {
 
     render(<UsersPage />);
 
-    await testUser.click(screen.getByRole('button', { name: 'AI elemzés' }));
+    await testUser.click(screen.getByRole('button', { name: 'AI Analysis' }));
 
     expect(mocks.handleGenerateAiSummary).toHaveBeenCalledTimes(1);
   });
@@ -134,15 +134,15 @@ describe('UsersPage', () => {
 
     render(<UsersPage />);
 
-    await testUser.click(screen.getAllByRole('button', { name: 'Törlés' })[0]);
+    await testUser.click(screen.getAllByRole('button', { name: 'Delete' })[0]);
 
     const dialog = screen.getByRole('dialog', {
-      name: 'Törlés megerősítése',
+      name: 'Confirm Deletion',
     });
 
-    expect(within(dialog).getByText('Anna Kovács')).toBeVisible();
+    expect(within(dialog).getByText('Anna Smith')).toBeVisible();
 
-    await testUser.click(within(dialog).getByRole('button', { name: 'Törlés' }));
+    await testUser.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
     expect(mocks.deleteUser).toHaveBeenCalledWith(1);
   });

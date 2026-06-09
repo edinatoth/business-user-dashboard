@@ -26,8 +26,8 @@ vi.mock('../services/aiUserSummaryService', () => ({
 const users: User[] = [
   {
     id: 1,
-    name: 'Anna Kovács',
-    email: 'anna.kovacs@example.com',
+    name: 'Anna Smith',
+    email: 'anna.smith@example.com',
     phone: '+36 30 123 4567',
     role: 'Admin',
     status: 'Active',
@@ -36,7 +36,7 @@ const users: User[] = [
 ];
 
 const aiSummary: AiSummary = {
-  overview: 'A felhasználók állapota stabil.',
+  overview: 'The user base is in a stable state.',
   stats: {
     totalUsers: 1,
     activeUsers: 1,
@@ -46,8 +46,8 @@ const aiSummary: AiSummary = {
     standardUsers: 0,
   },
   riskLevel: 'Low',
-  risks: ['Nincs kiemelt kockázat.'],
-  recommendations: ['Tartsd naprakészen az admin jogosultságokat.'],
+  risks: ['No major risks detected.'],
+  recommendations: ['Keep admin permissions up to date.'],
 };
 
 const generateAiUserSummaryMock = vi.mocked(generateAiUserSummary);
@@ -75,23 +75,23 @@ describe('useAiUserSummary', () => {
   it.each([
     [
       'BACKEND_UNAVAILABLE',
-      'Az AI kiszolgáló jelenleg nem érhető el. Ellenőrizd, hogy fut-e a backend.',
+      'The AI backend is currently unavailable. Please check that the backend is running.',
     ],
     [
       'CLAUDE_API_ERROR',
-      'Az AI szolgáltatás most nem tudott választ adni. Próbáld újra később.',
+      'The AI provider could not return a response. Please try again later.',
     ],
     [
       'INVALID_AI_RESPONSE',
-      'Az AI válasza nem a várt formátumban érkezett. Kérlek, próbáld újra.',
+      'The AI response was not in the expected format. Please try again.',
     ],
     [
       'EMPTY_USERS',
-      'Nincs elemezhető felhasználó. Módosítsd a szűrőket vagy adj hozzá új felhasználót.',
+      'There are no users to analyze. Adjust the filters or add a new user.',
     ],
     [
       'REQUEST_FAILED',
-      'Nem sikerült elkészíteni az AI elemzést. Kérlek, próbáld újra.',
+      'Could not generate the AI analysis. Please try again.',
     ],
   ] satisfies Array<[AiUserSummaryErrorCode, string]>)(
     'shows the mapped message for %s',
@@ -122,7 +122,7 @@ describe('useAiUserSummary', () => {
     });
 
     expect(result.current.aiError).toBe(
-      'Nem sikerült elkészíteni az AI elemzést. Kérlek, próbáld újra.'
+      'Could not generate the AI analysis. Please try again.'
     );
   });
 });

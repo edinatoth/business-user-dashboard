@@ -23,7 +23,7 @@ describe('useDebounce', () => {
       { initialProps: { value: 'Anna' } }
     );
 
-    rerender({ value: 'Dóra' });
+    rerender({ value: 'Dora' });
 
     expect(result.current).toBe('Anna');
 
@@ -31,7 +31,7 @@ describe('useDebounce', () => {
       vi.advanceTimersByTime(500);
     });
 
-    expect(result.current).toBe('Dóra');
+    expect(result.current).toBe('Dora');
   });
 
   it('clears the previous timeout when the value changes quickly', () => {

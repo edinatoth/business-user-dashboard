@@ -8,15 +8,15 @@ import type { AiSummary, User } from '../types/User';
 
 const AI_ERROR_MESSAGES: Record<AiUserSummaryErrorCode, string> = {
   BACKEND_UNAVAILABLE:
-    'Az AI kiszolgáló jelenleg nem érhető el. Ellenőrizd, hogy fut-e a backend.',
+    'The AI backend is currently unavailable. Please check that the backend is running.',
   CLAUDE_API_ERROR:
-    'Az AI szolgáltatás most nem tudott választ adni. Próbáld újra később.',
+    'The AI provider could not return a response. Please try again later.',
   EMPTY_USERS:
-    'Nincs elemezhető felhasználó. Módosítsd a szűrőket vagy adj hozzá új felhasználót.',
+    'There are no users to analyze. Adjust the filters or add a new user.',
   INVALID_AI_RESPONSE:
-    'Az AI válasza nem a várt formátumban érkezett. Kérlek, próbáld újra.',
+    'The AI response was not in the expected format. Please try again.',
   REQUEST_FAILED:
-    'Nem sikerült elkészíteni az AI elemzést. Kérlek, próbáld újra.',
+    'Could not generate the AI analysis. Please try again.',
 };
 
 function getAiErrorMessage(error: unknown) {

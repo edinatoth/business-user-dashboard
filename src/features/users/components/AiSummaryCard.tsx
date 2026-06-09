@@ -9,8 +9,8 @@ export function AiSummaryCard({ summary }: AiSummaryCardProps) {
     <section className="ai-summary-card">
       <div className="ai-summary-card__header">
         <div>
-          <p className="eyebrow">AI döntéstámogatás</p>
-          <h2>Felhasználói összefoglaló</h2>
+          <p className="eyebrow">AI Decision Support</p>
+          <h2>User Summary</h2>
         </div>
         <span>{summary.riskLevel} risk</span>
       </div>
@@ -19,15 +19,15 @@ export function AiSummaryCard({ summary }: AiSummaryCardProps) {
 
       <div className="ai-stats-grid">
         <div>
-          <span>Összes</span>
+          <span>Total</span>
           <strong>{summary.stats.totalUsers}</strong>
         </div>
         <div>
-          <span>Aktív</span>
+          <span>Active</span>
           <strong>{summary.stats.activeUsers}</strong>
         </div>
         <div>
-          <span>Inaktív</span>
+          <span>Inactive</span>
           <strong>{summary.stats.inactiveUsers}</strong>
         </div>
         <div>
@@ -38,7 +38,7 @@ export function AiSummaryCard({ summary }: AiSummaryCardProps) {
 
       <div className="ai-insights">
         <section className="ai-insight-panel">
-          <h3>Kockázatok</h3>
+          <h3>Risks</h3>
           <ul className="ai-risk-list">
             {summary.risks.map((risk) => (
               <li key={risk}>{risk}</li>
@@ -47,7 +47,7 @@ export function AiSummaryCard({ summary }: AiSummaryCardProps) {
         </section>
 
         <section className="ai-insight-panel ai-insight-panel--recommendations">
-          <h3>Felhasználói javaslatok</h3>
+          <h3>User Recommendations</h3>
           <div className="recommendation-list">
             {summary.recommendations.map((recommendation, index) => (
               <article className="recommendation-card" key={recommendation}>
