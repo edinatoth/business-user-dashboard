@@ -29,6 +29,7 @@ Benefits:
 - Easier code splitting
 - Clear separation of business domains
 
+```text
 src/
 ├── app/
 ├── features/
@@ -41,6 +42,7 @@ src/
 └── shared/
 ├── hooks/
 └── components/
+```
 
 ## AI Integration
 
