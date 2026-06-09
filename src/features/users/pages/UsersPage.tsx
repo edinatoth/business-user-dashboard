@@ -14,6 +14,7 @@ export function UsersPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole | 'All'>('All');
   const [selectedStatus, setSelectedStatus] = useState<UserStatus | 'All'>('All');
   const [isAddUserModalOpen, setAddUserModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -22,29 +23,36 @@ export function UsersPage() {
   const [deleteUser] = useDeleteUserMutation();
   const hasError = Boolean(error);
 
- const filteredUsers = useMemo(() => {
-  return users.filter((user) => {
-    const matchesSearch = user.name
-      .toLowerCase()
-      .includes(debouncedSearch.toLowerCase());
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchesSearch = user.name
+        .toLowerCase()
+        .includes(debouncedSearch.toLowerCase());
 
-    const matchesRole =
-      selectedRole === 'All' || user.role === selectedRole;
+      const matchesRole = selectedRole === 'All' || user.role === selectedRole;
+      const matchesStatus =
+        selectedStatus === 'All' || user.status === selectedStatus;
 
-    const matchesStatus =
-      selectedStatus === 'All' || user.status === selectedStatus;
-
-    return matchesSearch && matchesRole && matchesStatus;
-  });
-}, [users, debouncedSearch, selectedRole, selectedStatus]);
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  }, [users, debouncedSearch, selectedRole, selectedStatus]);
 
   const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     await addUser(newUser);
     setAddUserModalOpen(false);
   };
 
-  const handleDelete = async (userId: number) => {
-    await deleteUser(userId);
+  const handleDelete = (user: User) => {
+    setUserToDelete(user);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) {
+      return;
+    }
+
+    await deleteUser(userToDelete.id);
+    setUserToDelete(null);
   };
 
   return (
@@ -135,7 +143,11 @@ export function UsersPage() {
         (filteredUsers.length > 0 ? (
           <ul className="user-grid">
             {filteredUsers.map((user) => (
-              <UserCard key={user.id} user={user} onDelete={handleDelete} />
+              <UserCard
+                key={user.id}
+                user={user}
+                onDelete={() => handleDelete(user)}
+              />
             ))}
           </ul>
         ) : (
@@ -147,6 +159,53 @@ export function UsersPage() {
           onClose={() => setAddUserModalOpen(false)}
           onAdduser={handleAddUser}
         />
+      )}
+
+      {userToDelete && (
+        <div className="modal-backdrop">
+          <div
+            className="modal confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-user-title"
+          >
+            <div className="confirm-modal__icon" aria-hidden="true">
+              !
+            </div>
+
+            <div className="confirm-modal__content">
+              <p className="eyebrow">Végleges művelet</p>
+              <h2 id="delete-user-title">Törlés megerősítése</h2>
+              <p>
+                Biztosan törölni szeretnéd ezt a felhasználót? A művelet után
+                nem fog megjelenni a listában.
+              </p>
+
+              <div className="delete-user-preview">
+                <strong>{userToDelete.name}</strong>
+                <span>{userToDelete.email}</span>
+              </div>
+            </div>
+
+            <div className="modal__actions confirm-modal__actions">
+              <button
+                className="button button--ghost"
+                type="button"
+                onClick={() => setUserToDelete(null)}
+              >
+                Mégse
+              </button>
+
+              <button
+                className="button button--danger button--danger-solid"
+                type="button"
+                onClick={confirmDelete}
+              >
+                Törlés
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
