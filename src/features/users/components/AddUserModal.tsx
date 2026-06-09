@@ -1,140 +1,157 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { User } from '../types/User';
 
-type Formdata = {
-    name: string;
-    email: string;
-    phone: string;
-}
+type FormData = {
+  name: string;
+  email: string;
+  phone: string;
+};
 
 type AddUserModalProps = {
-    onClose: () => void;
-    onAdduser: (user: Formdata) => void;
-}
+  onClose: () => void;
+  onAdduser: (user: Omit<User, 'id'>) => void;
+};
 
-export function AddUserModal({onClose, onAdduser}: AddUserModalProps) {
-    const [formData, setFormdata] = useState({
-        name: '',
-        email: '',
-        phone: ''
-    })
+export function AddUserModal({ onClose, onAdduser }: AddUserModalProps) {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    phone: '',
+  });
 
-    const isFormValid = useMemo(() => {
-        return (
-            formData.name.trim().length > 0 &&
-            formData.email.includes('@') &&
-            formData.phone.trim().length > 0
-        );
-    }, [formData]);
-      const nameInputRef = useRef<HTMLInputElement | null>(null);
-    const [touched, setTouched] = useState({
-  name: false,
-  email: false,
-  phone: false,
-});
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    phone: false,
+  });
 
-function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
-  const { name } = event.target;
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
-  setTouched((prevTouched) => ({
-    ...prevTouched,
-    [name]: true,
-  }));
-}
+  const errors = useMemo(() => {
+    return {
+      name: formData.name.trim() ? '' : 'A név kötelező.',
+      email: formData.email.includes('@') ? '' : 'Érvényes email cím szükséges.',
+      phone: formData.phone.trim() ? '' : 'A telefonszám kötelező.',
+    };
+  }, [formData]);
 
-    const error = useMemo(() => {
-         return {
-    name: formData.name.trim() ? '' : 'A név kötelező.',
-    email: formData.email.includes('@') ? '' : 'Érvényes email cím szükséges.',
-    phone: formData.phone.trim() ? '' : 'A telefonszám kötelező.',
-  };
-    }, [formData])
+  const isFormValid = useMemo(() => {
+    return Object.values(errors).every((error) => error === '');
+  }, [errors]);
 
   useEffect(() => {
-    nameInputRef.current.focus();
-  }, [])
+    nameInputRef.current?.focus();
+  }, []);
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const {name, value} = event.target;
+  function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+    const { name } = event.target;
 
-        setFormdata((prevFormData) => ({
-          ...prevFormData,
-          [name]: value,
-        }));
-    }
+    setTouched((prevTouched) => ({
+      ...prevTouched,
+      [name]: true,
+    }));
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!isFormValid) {
+      setTouched({ name: true, email: true, phone: true });
       return;
     }
 
-    onAdduser(formData);
-    onClose();
+    onAdduser({
+      ...formData,
+      role: 'User',
+      status: 'Active',
+      lastLogin: new Date().toISOString().slice(0, 10),
+    });
   }
 
-   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="add-user-title">
-      <h2 id="add-user-title">Add user</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-          ref={nameInputRef}
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-             onBlur={handleBlur}
-          />
-           {touched.name && error.name && (
-            <p id="name-error" role="alert">
-              {error.name}
-            </p>
-          )}
+  return (
+    <div className="modal-backdrop">
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-user-title"
+      >
+        <div className="modal__header">
+          <div>
+            <p className="eyebrow">Új rekord</p>
+            <h2 id="add-user-title">Felhasználó hozzáadása</h2>
+          </div>
+          <button
+            className="icon-button"
+            type="button"
+            onClick={onClose}
+            aria-label="Bezárás"
+          >
+            ×
+          </button>
         </div>
 
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-             onBlur={handleBlur}
-          />
-           {touched.email && error.email && (
-            <p id="name-error" role="alert">
-              {error.email}
-            </p>
-          )}
-        </div>
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="form-field">
+            <label htmlFor="name">Név</label>
+            <input
+              ref={nameInputRef}
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Pl. Kiss Júlia"
+            />
+            {touched.name && errors.name && <p role="alert">{errors.name}</p>}
+          </div>
 
-        <div>
-          <label htmlFor="phone">Phone</label>
-          <input
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-             onBlur={handleBlur}    
-          />
-          {touched.phone && error.phone && (
-            <p id="name-error" role="alert">
-              {error.phone}
-            </p>
-          )}
-        </div>
+          <div className="form-field">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="julia@example.com"
+            />
+            {touched.email && errors.email && <p role="alert">{errors.email}</p>}
+          </div>
 
-        <button type="submit"  disabled={!isFormValid}>
-          Save
-        </button>
+          <div className="form-field">
+            <label htmlFor="phone">Telefon</label>
+            <input
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="+36 30 123 4567"
+            />
+            {touched.phone && errors.phone && <p role="alert">{errors.phone}</p>}
+          </div>
 
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
-      </form>
+          <div className="modal__actions">
+            <button className="button button--ghost" type="button" onClick={onClose}>
+              Mégse
+            </button>
+            <button className="button button--primary" type="submit" disabled={!isFormValid}>
+              Mentés
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

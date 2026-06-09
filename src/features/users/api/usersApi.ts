@@ -1,8 +1,8 @@
-import type { User } from "../types/User";
+import type { User } from '../types/User';
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 
 let users: User[] = [
-{
+  {
     id: 1,
     name: 'Anna Kovács',
     email: 'anna.kovacs@example.com',
@@ -32,11 +32,11 @@ let users: User[] = [
 ];
 
 export const usersApi = createApi({
-    reducerPath: 'usersApi',
-    baseQuery: fakeBaseQuery(),
-    tagTypes: ['Users'],
+  reducerPath: 'usersApi',
+  baseQuery: fakeBaseQuery(),
+  tagTypes: ['Users'],
 
-    endpoints: (builder) => ({
+  endpoints: (builder) => ({
     getUsers: builder.query<User[], void>({
       queryFn: async () => {
         return { data: users };

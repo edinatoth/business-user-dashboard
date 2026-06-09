@@ -18,6 +18,7 @@ export function UsersPage() {
   const { data: users = [], isLoading, error } = useGetUsersQuery();
   const [addUser] = useAddUserMutation();
   const [deleteUser] = useDeleteUserMutation();
+  const hasError = Boolean(error);
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) =>
@@ -35,37 +36,68 @@ export function UsersPage() {
   };
 
   return (
-    <main>
-      <h1>Business User Management Dashboard</h1>
+    <main className="dashboard">
+      <section className="dashboard__hero">
+        <div>
+          <p className="eyebrow">Felhasználókezelés</p>
+          <h1>Business User Management Dashboard</h1>
+          <p className="dashboard__lead">
+            Áttekinthető lista, gyors keresés és egyszerű felhasználókezelés egy
+            letisztult felületen.
+          </p>
+        </div>
 
-      <div>
-        <label htmlFor="search">Keresés név alapján</label>
-        <input
-          id="search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Keresés..."
-        />
-
-        <button type="button" onClick={() => setAddUserModalOpen(true)}>
-          Add user
+        <button
+          className="button button--primary"
+          type="button"
+          onClick={() => setAddUserModalOpen(true)}
+        >
+          + Új felhasználó
         </button>
-      </div>
+      </section>
 
-      <p>Users: {users.length}</p>
-      <p>Filtered: {filteredUsers.length}</p>
+      <section className="toolbar" aria-label="Felhasználók szűrése">
+        <div className="search-field">
+          <label htmlFor="search">Keresés név alapján</label>
+          <input
+            id="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Pl. Anna Kovács"
+          />
+        </div>
 
-      {isLoading && <p>Betöltés folyamatban...</p>}
+        <div className="stats">
+          <div className="stat">
+            <span>Összes felhasználó</span>
+            <strong>{users.length}</strong>
+          </div>
+          <div className="stat">
+            <span>Találatok</span>
+            <strong>{filteredUsers.length}</strong>
+          </div>
+        </div>
+      </section>
 
-      {error && <p role="alert">Hiba történt a felhasználók betöltésekor.</p>}
+      {isLoading && <p className="state-message">Betöltés folyamatban...</p>}
 
-      {!isLoading && !error && (
-        <ul>
-          {filteredUsers.map((user) => (
-            <UserCard key={user.id} user={user} onDelete={handleDelete} />
-          ))}
-        </ul>
+      {hasError && (
+        <p className="state-message state-message--error" role="alert">
+          Hiba történt a felhasználók betöltésekor.
+        </p>
       )}
+
+      {!isLoading &&
+        !hasError &&
+        (filteredUsers.length > 0 ? (
+          <ul className="user-grid">
+            {filteredUsers.map((user) => (
+              <UserCard key={user.id} user={user} onDelete={handleDelete} />
+            ))}
+          </ul>
+        ) : (
+          <p className="state-message">Nincs találat erre a keresésre.</p>
+        ))}
 
       {isAddUserModalOpen && (
         <AddUserModal
