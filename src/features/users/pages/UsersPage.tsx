@@ -9,12 +9,25 @@ import {
 import type { User, UserRole, UserStatus } from '../types/User';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
 
+function formatAiSummary(summary: string) {
+  return summary
+    .replace(/\*\*/g, '')
+    .replace(/\s*#{1,6}\s*/g, '\n')
+    .replace(/\s+-\s+/g, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 export function UsersPage() {
   const [search, setSearch] = useState('');
   const [selectedRole, setSelectedRole] = useState<UserRole | 'All'>('All');
   const [selectedStatus, setSelectedStatus] = useState<UserStatus | 'All'>('All');
   const [isAddUserModalOpen, setAddUserModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [aiSummary, setAiSummary] = useState('');
+  const [isAiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -37,6 +50,10 @@ export function UsersPage() {
     });
   }, [users, debouncedSearch, selectedRole, selectedStatus]);
 
+  const formattedAiSummary = useMemo(() => {
+    return formatAiSummary(aiSummary);
+  }, [aiSummary]);
+
   const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     await addUser(newUser);
     setAddUserModalOpen(false);
@@ -55,6 +72,34 @@ export function UsersPage() {
     setUserToDelete(null);
   };
 
+  const handleGenerateAiSummary = async () => {
+    try {
+      setAiLoading(true);
+      setAiError('');
+      setAiSummary('');
+
+      const response = await fetch('http://localhost:3001/api/ai/user-summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ users: filteredUsers }),
+      });
+
+      if (!response.ok) {
+        throw new Error('AI summary request failed');
+      }
+
+      const data = await response.json();
+
+      setAiSummary(data.summary);
+    } catch {
+      setAiError('Nem sikerült elkészíteni az AI elemzést.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   return (
     <main className="dashboard">
       <section className="dashboard__hero">
@@ -67,13 +112,24 @@ export function UsersPage() {
           </p>
         </div>
 
-        <button
-          className="button button--primary"
-          type="button"
-          onClick={() => setAddUserModalOpen(true)}
-        >
-          + Új felhasználó
-        </button>
+        <div className="hero-actions">
+          <button
+            className="button button--primary"
+            type="button"
+            onClick={() => setAddUserModalOpen(true)}
+          >
+            + Új felhasználó
+          </button>
+
+          <button
+            className="button button--secondary"
+            type="button"
+            onClick={handleGenerateAiSummary}
+            disabled={isAiLoading || filteredUsers.length === 0}
+          >
+            {isAiLoading ? 'AI elemzés folyamatban...' : 'AI elemzés'}
+          </button>
+        </div>
       </section>
 
       <section className="toolbar" aria-label="Felhasználók szűrése">
@@ -129,6 +185,30 @@ export function UsersPage() {
           </div>
         </div>
       </section>
+
+      {aiError && (
+        <p className="state-message state-message--error" role="alert">
+          {aiError}
+        </p>
+      )}
+
+      {aiSummary && (
+        <section className="ai-summary-card">
+          <div className="ai-summary-card__header">
+            <div>
+              <p className="eyebrow">AI döntéstámogatás</p>
+              <h2>Felhasználói összefoglaló</h2>
+            </div>
+            <span>{filteredUsers.length} felhasználó alapján</span>
+          </div>
+
+          <div className="ai-summary-list">
+            {formattedAiSummary.map((line, index) => (
+              <p key={`${line}-${index}`}>{line}</p>
+            ))}
+          </div>
+        </section>
+      )}
 
       {isLoading && <p className="state-message">Betöltés folyamatban...</p>}
 

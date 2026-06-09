@@ -10,4 +10,4 @@ export type User = {
 
 export type UserRole = 'Admin' | 'Manager' | 'User';
 
-export type UserStatus = 'Admin' | 'Manager' | 'User';
+export type UserStatus = 'Active' | 'Inactive';
