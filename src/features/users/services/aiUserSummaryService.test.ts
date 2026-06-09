@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { generateAiUserSummary } from './aiUserSummaryService';
-import type { User } from '../types/User';
+import type { AiSummary, User } from '../types/User';
 
 const users: User[] = [
   {
@@ -14,6 +14,21 @@ const users: User[] = [
   },
 ];
 
+const summary: AiSummary = {
+  overview: 'A felhasználók állapota stabil.',
+  stats: {
+    totalUsers: 1,
+    activeUsers: 1,
+    inactiveUsers: 0,
+    adminUsers: 1,
+    managerUsers: 0,
+    standardUsers: 0,
+  },
+  riskLevel: 'Low',
+  risks: ['Nincs kiemelt kockázat.'],
+  recommendations: ['Tartsd naprakészen az admin jogosultságokat.'],
+};
+
 describe('generateAiUserSummary', () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -23,13 +38,11 @@ describe('generateAiUserSummary', () => {
   it('posts users to the AI summary endpoint and returns the summary', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ summary: 'Admin users look healthy.' }),
+      json: async () => ({ summary }),
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(generateAiUserSummary(users)).resolves.toBe(
-      'Admin users look healthy.'
-    );
+    await expect(generateAiUserSummary(users)).resolves.toEqual(summary);
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://localhost:3001/api/ai/user-summary',

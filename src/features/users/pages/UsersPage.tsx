@@ -10,16 +10,6 @@ import { useAiUserSummary } from '../hooks/useAiUserSummary';
 import type { User, UserRole, UserStatus } from '../types/User';
 import { useDebounce } from '../../../shared/hooks/useDebounce';
 
-function formatAiSummary(summary: string) {
-  return summary
-    .replace(/\*\*/g, '')
-    .replace(/\s*#{1,6}\s*/g, '\n')
-    .replace(/\s+-\s+/g, '\n')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
-
 export function UsersPage() {
   const [search, setSearch] = useState('');
   const [selectedRole, setSelectedRole] = useState<UserRole | 'All'>('All');
@@ -50,10 +40,6 @@ export function UsersPage() {
 
   const { handleGenerateAiSummary, aiSummary, isAiLoading, aiError } =
     useAiUserSummary(filteredUsers);
-
-  const formattedAiSummary = useMemo(() => {
-    return formatAiSummary(aiSummary);
-  }, [aiSummary]);
 
   const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     await addUser(newUser);
@@ -172,13 +158,51 @@ export function UsersPage() {
               <p className="eyebrow">AI döntéstámogatás</p>
               <h2>Felhasználói összefoglaló</h2>
             </div>
-            <span>{filteredUsers.length} felhasználó alapján</span>
+            <span>{aiSummary.riskLevel} risk</span>
           </div>
 
-          <div className="ai-summary-list">
-            {formattedAiSummary.map((line, index) => (
-              <p key={`${line}-${index}`}>{line}</p>
-            ))}
+          <p className="ai-summary-overview">{aiSummary.overview}</p>
+
+          <div className="ai-stats-grid">
+            <div>
+              <span>Összes</span>
+              <strong>{aiSummary.stats.totalUsers}</strong>
+            </div>
+            <div>
+              <span>Aktív</span>
+              <strong>{aiSummary.stats.activeUsers}</strong>
+            </div>
+            <div>
+              <span>Inaktív</span>
+              <strong>{aiSummary.stats.inactiveUsers}</strong>
+            </div>
+            <div>
+              <span>Admin</span>
+              <strong>{aiSummary.stats.adminUsers}</strong>
+            </div>
+          </div>
+
+          <div className="ai-insights">
+            <section className="ai-insight-panel">
+              <h3>Kockázatok</h3>
+              <ul className="ai-risk-list">
+                {aiSummary.risks.map((risk) => (
+                  <li key={risk}>{risk}</li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="ai-insight-panel ai-insight-panel--recommendations">
+              <h3>Felhasználói javaslatok</h3>
+              <div className="recommendation-list">
+                {aiSummary.recommendations.map((recommendation, index) => (
+                  <article className="recommendation-card" key={recommendation}>
+                    <span>{index + 1}</span>
+                    <p>{recommendation}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
         </section>
       )}

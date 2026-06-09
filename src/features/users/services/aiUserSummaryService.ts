@@ -1,7 +1,7 @@
-import type { User } from '../types/User';
+import type { AiSummary, User } from '../types/User';
 
 type AiUserSummaryResponse = {
-  summary: string;
+  summary: AiSummary;
 };
 
 export async function generateAiUserSummary(users: User[]) {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { generateAiUserSummary } from '../services/aiUserSummaryService';
-import type { User } from '../types/User';
+import type { AiSummary, User } from '../types/User';
 
 export function useAiUserSummary(users: User[]) {
-  const [aiSummary, setAiSummary] = useState('');
+  const [aiSummary, setAiSummary] = useState<AiSummary | null>(null);
   const [isAiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
 
@@ -11,7 +11,7 @@ export function useAiUserSummary(users: User[]) {
     try {
       setAiLoading(true);
       setAiError('');
-      setAiSummary('');
+      setAiSummary(null);
 
       const summary = await generateAiUserSummary(users);
 

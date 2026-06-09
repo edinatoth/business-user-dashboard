@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { User } from '../types/User';
+import type { AiSummary, User } from '../types/User';
 import { UsersPage } from './UsersPage';
 
 const mocks = vi.hoisted(() => ({
@@ -34,6 +34,23 @@ const mocks = vi.hoisted(() => ({
       lastLogin: '2026-05-22',
     },
   ] satisfies User[],
+  summary: {
+    overview: 'A felhasználói lista egészséges állapotban van.',
+    stats: {
+      totalUsers: 3,
+      activeUsers: 2,
+      inactiveUsers: 1,
+      adminUsers: 1,
+      managerUsers: 1,
+      standardUsers: 1,
+    },
+    riskLevel: 'Low',
+    risks: ['Egy inaktív manager található.'],
+    recommendations: [
+      'Ellenőrizd Péter Nagy jogosultságait.',
+      'Tartsd naprakészen az admin hozzáféréseket.',
+    ],
+  } satisfies AiSummary,
   addUser: vi.fn(),
   deleteUser: vi.fn(),
   handleGenerateAiSummary: vi.fn(),
@@ -52,7 +69,7 @@ vi.mock('../api/usersApi', () => ({
 vi.mock('../hooks/useAiUserSummary', () => ({
   useAiUserSummary: () => ({
     handleGenerateAiSummary: mocks.handleGenerateAiSummary,
-    aiSummary: 'Aktív felhasználók rendben vannak.',
+    aiSummary: mocks.summary,
     isAiLoading: false,
     aiError: '',
   }),
@@ -77,6 +94,14 @@ describe('UsersPage', () => {
     expect(screen.getByRole('heading', { name: 'Anna Kovács' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Péter Nagy' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Dóra Szabó' })).toBeVisible();
+  });
+
+  it('renders AI recommendations as readable cards', () => {
+    render(<UsersPage />);
+
+    expect(screen.getByRole('heading', { name: 'Felhasználói javaslatok' })).toBeVisible();
+    expect(screen.getByText('Ellenőrizd Péter Nagy jogosultságait.')).toBeVisible();
+    expect(screen.getByText('Tartsd naprakészen az admin hozzáféréseket.')).toBeVisible();
   });
 
   it('filters users by role and status', async () => {

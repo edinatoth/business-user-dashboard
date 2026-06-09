@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { generateAiUserSummary } from '../services/aiUserSummaryService';
-import type { User } from '../types/User';
+import type { AiSummary, User } from '../types/User';
 import { useAiUserSummary } from './useAiUserSummary';
 
 vi.mock('../services/aiUserSummaryService', () => ({
@@ -20,6 +20,21 @@ const users: User[] = [
   },
 ];
 
+const aiSummary: AiSummary = {
+  overview: 'A felhasználók állapota stabil.',
+  stats: {
+    totalUsers: 1,
+    activeUsers: 1,
+    inactiveUsers: 0,
+    adminUsers: 1,
+    managerUsers: 0,
+    standardUsers: 0,
+  },
+  riskLevel: 'Low',
+  risks: ['Nincs kiemelt kockázat.'],
+  recommendations: ['Tartsd naprakészen az admin jogosultságokat.'],
+};
+
 const generateAiUserSummaryMock = vi.mocked(generateAiUserSummary);
 
 describe('useAiUserSummary', () => {
@@ -28,7 +43,7 @@ describe('useAiUserSummary', () => {
   });
 
   it('generates and stores the AI summary', async () => {
-    generateAiUserSummaryMock.mockResolvedValue('Everything looks good.');
+    generateAiUserSummaryMock.mockResolvedValue(aiSummary);
 
     const { result } = renderHook(() => useAiUserSummary(users));
 
@@ -37,7 +52,7 @@ describe('useAiUserSummary', () => {
     });
 
     expect(generateAiUserSummaryMock).toHaveBeenCalledWith(users);
-    expect(result.current.aiSummary).toBe('Everything looks good.');
+    expect(result.current.aiSummary).toEqual(aiSummary);
     expect(result.current.aiError).toBe('');
     expect(result.current.isAiLoading).toBe(false);
   });
@@ -51,7 +66,7 @@ describe('useAiUserSummary', () => {
       await result.current.handleGenerateAiSummary();
     });
 
-    expect(result.current.aiSummary).toBe('');
+    expect(result.current.aiSummary).toBeNull();
     expect(result.current.aiError).toBe(
       'Nem sikerült elkészíteni az AI elemzést.'
     );
