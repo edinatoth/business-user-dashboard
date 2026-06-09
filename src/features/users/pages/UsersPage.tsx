@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AddUserModal } from '../components/AddUserModal';
+import { AiSummaryCard } from '../components/AiSummaryCard';
+import { AiSummaryErrorBoundary } from '../components/AiSummaryErrorBoundary';
 import { UserCard } from '../components/UserCard';
 import {
   useAddUserMutation,
@@ -152,59 +154,9 @@ export function UsersPage() {
       )}
 
       {aiSummary && (
-        <section className="ai-summary-card">
-          <div className="ai-summary-card__header">
-            <div>
-              <p className="eyebrow">AI döntéstámogatás</p>
-              <h2>Felhasználói összefoglaló</h2>
-            </div>
-            <span>{aiSummary.riskLevel} risk</span>
-          </div>
-
-          <p className="ai-summary-overview">{aiSummary.overview}</p>
-
-          <div className="ai-stats-grid">
-            <div>
-              <span>Összes</span>
-              <strong>{aiSummary.stats.totalUsers}</strong>
-            </div>
-            <div>
-              <span>Aktív</span>
-              <strong>{aiSummary.stats.activeUsers}</strong>
-            </div>
-            <div>
-              <span>Inaktív</span>
-              <strong>{aiSummary.stats.inactiveUsers}</strong>
-            </div>
-            <div>
-              <span>Admin</span>
-              <strong>{aiSummary.stats.adminUsers}</strong>
-            </div>
-          </div>
-
-          <div className="ai-insights">
-            <section className="ai-insight-panel">
-              <h3>Kockázatok</h3>
-              <ul className="ai-risk-list">
-                {aiSummary.risks.map((risk) => (
-                  <li key={risk}>{risk}</li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="ai-insight-panel ai-insight-panel--recommendations">
-              <h3>Felhasználói javaslatok</h3>
-              <div className="recommendation-list">
-                {aiSummary.recommendations.map((recommendation, index) => (
-                  <article className="recommendation-card" key={recommendation}>
-                    <span>{index + 1}</span>
-                    <p>{recommendation}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </div>
-        </section>
+        <AiSummaryErrorBoundary>
+          <AiSummaryCard summary={aiSummary} />
+        </AiSummaryErrorBoundary>
       )}
 
       {isLoading && <p className="state-message">Betöltés folyamatban...</p>}

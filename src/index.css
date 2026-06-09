@@ -569,6 +569,27 @@ select:focus {
   line-height: 1.55;
 }
 
+.ai-boundary-fallback {
+  margin: 0 0 24px;
+  padding: 22px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #7f1d1d;
+  background: linear-gradient(135deg, #fff7f7, #ffffff);
+  box-shadow: var(--shadow);
+}
+
+.ai-boundary-fallback h2 {
+  margin-bottom: 8px;
+  color: #991b1b;
+  font-size: 1.2rem;
+}
+
+.ai-boundary-fallback p:last-child {
+  margin-bottom: 0;
+  color: #7f1d1d;
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
